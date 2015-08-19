@@ -15,11 +15,11 @@ int conn_amount;      // current connection amount
 void showclient()
 {
 	int i;
-	printf("client amount: %d/n", conn_amount);
+	printf("-----> client amount: %d\n", conn_amount);
 	for (i = 0; i < BACKLOG; i++) {
-		printf("[%d]:%d  ", i, fd_A[i]);
+		printf("BACKLOG%d ---> fd = %d\n", i, fd_A[i]);
 	}
-	printf("/n/n");
+	printf("\n\n");
 }
 int main(void)
 {
@@ -53,7 +53,7 @@ int main(void)
 		perror("listen");
 		exit(1);
 	}
-	printf("listen port %d/n", MYPORT);
+	printf("listen port %d\n", MYPORT);
 	fd_set fdsr;
 	int maxsock;
 	struct timeval tv;
@@ -74,12 +74,12 @@ int main(void)
 				FD_SET(fd_A[i], &fdsr);
 			}
 		}
-		ret = select(maxsock + 1, &fdsr, NULL, NULL, &tv);
+		ret = select(maxsock + 1, &fdsr, NULL, NULL, NULL);// &tv);
 		if (ret < 0) {          // error
 			perror("select");
 			break;
 		} else if (ret == 0) {  // time out
-			printf("timeout/n");
+			printf("timeout\n");
 			continue;
 		}
 		// check every fd in the set
@@ -90,7 +90,7 @@ int main(void)
 				ret = recv(fd_A[i], buf, sizeof(buf), 0);
 				if (ret <= 0) 
 				{        // client close
-					printf("ret : %d and client[%d] close/n", ret, i);
+					printf("ret : %d and client[%d] close\n", ret, i);
 					close(fd_A[i]);
 					FD_CLR(fd_A[i], &fdsr);  // delete fd 
 					fd_A[i] = 0;
@@ -99,8 +99,8 @@ int main(void)
 				else 
 				{        // receive data
 					if (ret < BUF_SIZE)
-						memset(&buf[ret], '0', 1); // add NULL('/0')
-					printf("client[%d] send:%s/n", i, buf);
+						memset(&buf[ret], '\0', 1); // add NULL('/0')
+					printf("client[%d] send:%s\n", i, buf);
 				}
 			}
 		}
@@ -117,14 +117,14 @@ int main(void)
 			if (conn_amount < BACKLOG) 
 			{
 				fd_A[conn_amount++] = new_fd;
-				printf("new connection client[%d] %s:%d/n", conn_amount,
+				printf("------> new connection client[%d] %s:%d\n", conn_amount,
 						inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
 				if (new_fd > maxsock)  // update the maxsock fd for select function
 					maxsock = new_fd;
 			}
 			else 
 			{
-				printf("max connections arrive, exit/n");
+				printf("max connections arrive, exit\n");
 				send(new_fd, "bye", 4, 0);
 				close(new_fd);
 				break;   

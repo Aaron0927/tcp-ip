@@ -17,7 +17,7 @@ int     close_socket(int sockfd);
 int main(int argc, char ** argv)
 {
 	int   sockfd=0;
-	char  sendMsg[30]="abc.org\r\n\r";
+	char  sendMsg[30]="zhangchengfei\r\n\r";
 	char* res;
 	int   port = 1234;
 	char  ip[128] = {0};
@@ -36,12 +36,14 @@ int main(int argc, char ** argv)
     printf("start connect\n");
 	sockfd=connect_socket(ip, port);
     printf("connect OK\n");	
+    getchar();
 	send_msg(sockfd, sendMsg);
 	/* res=recv_msg(sockfd); */
 	
-	printf("return from recv function\n");
+	printf("send msg = %s\n", sendMsg);
 	//printf(res);
 	//free(res);
+    getchar();
 	close_socket(sockfd);
 	return 0;
 }
