@@ -8,6 +8,7 @@
 #include   <unistd.h>
 #include   <netinet/in.h>
 #include   <arpa/inet.h>
+#include   <string.h>
 #define    RES_LENGTH  10240 //接受字符的最大长度
 int     connect_socket(char * server,int serverPort);
 int     send_msg(int sockfd,char * sendBuff);
@@ -16,30 +17,31 @@ int     close_socket(int sockfd);
 int main(int argc, char ** argv)
 {
 	int   sockfd=0;
-	char  sendMsg[30]="abc.org/r/n/r";
+	char  sendMsg[30]="abc.org\r\n\r";
 	char* res;
-	int   port = 4242;
+	int   port = 1234;
 	char  ip[128] = {0};
 	strncpy(ip, "127.0.0.1", 128);
 	if(argc > 2)
 	{
 		strncpy(ip, argv[1], 128);
 		port = atoi(argv[2]);
-		printf("Input IP: %s, port : %d/n", ip, port);
+		printf("Input IP: %s, port : %d\n", ip, port);
 	}
 	else if(argc > 1)
 	{	
 		port = atoi(argv[1]);
-		printf("Input port : %d/n", port);
+		printf("Input port : %d\n", port);
 	}
+    printf("start connect\n");
 	sockfd=connect_socket(ip, port);
-	
-	send_msg(sockfd,sendMsg);
+    printf("connect OK\n");	
+	send_msg(sockfd, sendMsg);
 	/* res=recv_msg(sockfd); */
 	
-	printf("return from recv function/n");
-	printf(res);
-	free(res);
+	printf("return from recv function\n");
+	//printf(res);
+	//free(res);
 	close_socket(sockfd);
 	return 0;
 }
@@ -104,11 +106,11 @@ char* recv_msg(int sockfd){
 	
 	for(flag=0;;)
 	{
-		printf("======recv data:/n");
+		printf("======recv data:\n");
 		if(( recLenth=recv(sockfd,response+flag,RES_LENGTH-flag,0))==-1 )
 		{
 			free(response);
-			printf("Return value : %d/n", recLenth);
+			printf("Return value : %d\n", recLenth);
 			perror("Recv msg error : ");
 			return NULL;
 		}
@@ -116,13 +118,13 @@ char* recv_msg(int sockfd){
 			break;
 		else
 		{
-			printf("%d char recieved data : %s./n", recLenth, response+flag);
+			printf("%d char recieved data : %s.\n", recLenth, response+flag);
 			flag+=recLenth;
 			recLenth=0;
 		}
 	}
-	printf("Return value : %d/n", recLenth);
-	response[flag]='/0';
+	printf("Return value : %d\n", recLenth);
+	response[flag]='0';
 	return response;
 }
 /**************************************************

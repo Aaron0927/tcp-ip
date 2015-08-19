@@ -23,6 +23,7 @@ void showclient()
 }
 int main(void)
 {
+    printf("start server\n");
 	int sock_fd, new_fd;             // listen on sock_fd, new connection on new_fd
 	struct sockaddr_in server_addr;  // server address information
 	struct sockaddr_in client_addr;  // connector's address information
@@ -42,11 +43,12 @@ int main(void)
 	server_addr.sin_family = AF_INET;         // host byte order
 	server_addr.sin_port = htons(MYPORT);     // short, network byte order
 	server_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
-	memset(server_addr.sin_zero, '/0', sizeof(server_addr.sin_zero));
+	memset(server_addr.sin_zero, '0', sizeof(server_addr.sin_zero));
 	if (bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
 		perror("bind");
 		exit(1);
 	}
+    printf("listen...\n");
 	if (listen(sock_fd, BACKLOG) == -1) {
 		perror("listen");
 		exit(1);
@@ -97,7 +99,7 @@ int main(void)
 				else 
 				{        // receive data
 					if (ret < BUF_SIZE)
-						memset(&buf[ret], '/0', 1); // add NULL('/0')
+						memset(&buf[ret], '0', 1); // add NULL('/0')
 					printf("client[%d] send:%s/n", i, buf);
 				}
 			}
